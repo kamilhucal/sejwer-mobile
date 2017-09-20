@@ -1,0 +1,3 @@
+rootProject.name = 'sejwer_nejtiv'
+
+include ':app'
