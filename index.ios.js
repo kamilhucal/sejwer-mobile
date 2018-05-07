@@ -33,8 +33,6 @@ export default class sejwer_nejtiv extends Component {
             style={{flex: 1}}
             barTintColor='#ffffcc'
         />
-
-
         );
     }
 }
@@ -45,16 +43,11 @@ const TabsStack = TabNavigator({
     tabBarPosition: 'top',
     animationEnabled: false,
 });
-const StackStack = StackNavigator({
-        Home: { screen: Home },
-        Settings: { screen: Settings }
-});
 
 const SimpleApp = StackNavigator({
-
     Login: {screen: Login},
     Register: {screen: Register},
-    StackInside: {screen: StackStack},
+    // StackInside: {screen: TabsStack},
 
 });
 AppRegistry.registerComponent('sejwer_nejtiv', () => SimpleApp);

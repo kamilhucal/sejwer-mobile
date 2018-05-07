@@ -2,11 +2,16 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import {Text, KeyboardAvoidingView, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import {StyleSheet} from 'react-native';
+import * as Globals from "../../helpers/Globals";
+
+
+
 
 export class Register extends Component {
 
     constructor(props) {
 
+        console.log(Globals.default.API_URL);
         super(props);
         this.state = {
             password: null,
@@ -46,7 +51,8 @@ export class Register extends Component {
 
     if(this.state.email && this.state.password && this.state.repeatedPassword){
             try {
-                let response = await fetch('https://sejwer.herokuapp.com/register', {
+
+                let response = await fetch('http:/www.sejwer.pl/api/register', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',

@@ -3,7 +3,6 @@ import {View, Button} from 'react-native';
 import {Text, KeyboardAvoidingView, TextInput, TouchableOpacity, StatusBar, AsyncStorage} from 'react-native';
 import {StyleSheet} from 'react-native';
 
-
 export class Login extends Component {
     constructor(props) {
         super(props);
@@ -29,7 +28,7 @@ export class Login extends Component {
 
     async onPressLoginButton() {
         try {
-            let response = await fetch('https://sejwer.herokuapp.com/login', {
+            let response = await fetch('http://www.sejwer.pl/api/login', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
