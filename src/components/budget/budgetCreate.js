@@ -1,47 +1,57 @@
 import React, {Component} from 'react';
-import {View, Button} from 'react-native';
-import {Text, KeyboardAvoidingView, TextInput, TouchableOpacity, StatusBar, AsyncStorage} from 'react-native';
+import {View, NavigatorIOS, TabBarIOS,} from 'react-native';
+import {Text, KeyboardAvoidingView, TextInput, TouchableOpacity, StatusBar} from 'react-native';
 import {StyleSheet} from 'react-native';
+import {StackNavigator, HeaderBackButton} from 'react-navigation'
+import {NavigationActions} from 'react-navigation'
+import {TaBBar} from "../../tabBar";
 
-export class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            password: '',
-            email: '',
-            error: '',
-            navigation: this.props.navigation,
-        };
-    }
-
+export class budgetCreate extends Component {
     static navigationOptions = {
-        drawerLabel: 'Home',
-    };
-
-
-    static navigationOptions = {
-        headerTitle: 'Login',
+        headerTitle: 'Create Budget',
         headerTintColor: 'white',
         headerStyle: {
             backgroundColor: '#2c3e50'
-        }
-
+        },
+        // header: null,
     };
 
-    async onPressLoginButton() {
+
+    constructor(props) {
+
+        super(props);
+        this.state = {
+            error: '',
+        };
+    }
+
+    async onPressCreateBudgetButton() {
         try {
-            let response = await fetch('http://www.sejwer.pl/api/login', {
+            let response = await fetch('http://ww   w.sejwer.pl/api/budget', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
+
                 body: JSON.stringify({
-                    username: this.state.email,
-                    password: this.state.password,
+                    name: this.state.budgetName,
+                    value: this.state.budgetLimit,
+                    createdAt: {
+                        year: this.state.budgetStartDate.year,
+                        month: this.state.budgetStartDate.month,
+                        day: this.state.budgetStartDate.day
+                    },
+                    expiredAt: {
+                        year: this.state.budgetEndDate.year,
+                        month: this.state.budgetEndDate.month,
+                        day: this.state.budgetEndDate.day
+                    },
+
                 })
             });
-            let responseJson = await response.json();
+
+            let responseJson = response.json();
             if (responseJson.code === 401) {
                 this.setState({error: "Złe Dane Logowania"})
                 return false;
@@ -61,62 +71,60 @@ export class Login extends Component {
 
     }
 
-    redirectToHome(result) {
-        if (result) {
-            this.props.navigation.navigate('Home');
-        }
-    }
-
-    async componentWillMount() {
-
-        try {
-            const value = await   AsyncStorage.getItem('token');
-
-            console.log(value);
-            if (value !== null) {
-                const token = await   AsyncStorage.getItem('token');
-                if (token !== null) {
-                    let response = await fetch('http://www.sejwer.pl/api/profile', {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + token,
-                        }
-                    });
-                    let responseJson = await response.json();
-                    if (!responseJson.code) {
-                        this.state.navigation.navigate('Home', {message: 'success'});
-                        if (this.props.navigation.state.params) {
-                            this.setState({success: this.props.navigation.state.params.message})
-                        }
-                    }
-                }
-
-            }
-        } catch (error) {
-            console.error(error)
-            // Error retrieving data
-        }
-
-    }
-
     render() {
-
-        const {navigate} = this.props.navigation;
-
         return (
-
             <KeyboardAvoidingView style={styles.container}>
-
-                <View style={styles.loginFormWrapper}>
-
+                <View style={styles.formWrapper}>
+                    /*// nazwa value expired_at && created_at */
                     <StatusBar
                         backgroundColor="blue"
                         barStyle="light-content"
                     />
                     <TextInput
-                        placeholder="adres email"
+                        placeholder="Nazwa Budgetu"
+                        returnKeyType={"next"}
+                        placeholderTextColor="black"
+                        onSubmitEditing={() => {
+                            this.nameInput.focus()
+                        }}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrection={false}
+                        style={styles.input}
+                        onChangeText={(value) => this.setState({budgetName: value})}
+
+                    />
+                    <TextInput
+                        placeholder="Limit"
+                        returnKeyType={"next"}
+                        placeholderTextColor="black"
+                        onSubmitEditing={() => {
+                            this.limitInput.focus()
+                        }}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrection={false}
+                        style={styles.input}
+                        onChangeText={(value) => this.setState({budgetLimit: value})}
+
+                    />
+
+                    <TextInput
+                        placeholder="Poczatek budgetu"
+                        returnKeyType={"next"}
+                        placeholderTextColor="black"
+                        onSubmitEditing={() => {
+                            this.startDateInput.focus()
+                        }}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoCorrection={false}
+                        style={styles.input}
+                        onChangeText={(value) => this.setState({budgetStartDate: value})}
+
+                    />
+                    <TextInput
+                        placeholder="Koniec Budzetu"
                         returnKeyType={"next"}
                         placeholderTextColor="black"
                         onSubmitEditing={() => {
@@ -126,45 +134,21 @@ export class Login extends Component {
                         autoCapitalize="none"
                         autoCorrection={false}
                         style={styles.input}
-                        onChangeText={(value) => this.setState({email: value})}
+                        onChangeText={(value) => this.setState({budgetEndDate: value})}
 
                     />
-                    <TextInput
-                        placeholder="haslo"
-                        placeholderTextColor="black"
-                        secureTextEntry
-                        returnKeyType={"go"}
-                        ref={(input) => this.passwordInput = input}
-                        onChangeText={(value) => this.setState({password: value})}
-                        style={styles.input}/>
                     <View style={styles.buttonWrapper}>
                         <TouchableOpacity
-                            style={styles.loginButton}
-                            onPress={this.onPressLoginButton.bind(this)}>
-                            <Text style={styles.loginTextButton}>Login</Text>
+                            style={styles.button}
+                            onPress={this.onPressCreateBudgetButton.bind(this)}>
+                            <Text style={styles.loginTextButton}>Create</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View>
-                    <Text style={styles.subtitleSmall}>Nie masz konta?</Text>
-                    <Text
-                        onPress={() => navigate('Register')}
-                        style={styles.subtitle}>Zarejestruj sie!</Text>
-                </View>
-                <View style={styles.errorWrapper}>
-                    <Text style={styles.errorMessage}>{this.state.error} </Text>
-                    <Text style={styles.successMessage}>{this.state.success}
-                    </Text>
-                </View>
-                <View style={styles.footer}>
-                    <Text style={styles.subtitleSmall}>Designed by Webstork Inc.</Text>
-                </View>
             </KeyboardAvoidingView>
-
         )
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -231,7 +215,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         // padding: 10
     },
-    loginFormWrapper: {
+    formWrapper: {
         padding: 20,
     },
     input: {
