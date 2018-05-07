@@ -45,9 +45,9 @@ const TabsStack = TabNavigator({
 });
 
 const SimpleApp = StackNavigator({
+    Home: { screen: Home },
     Login: {screen: Login},
     Register: {screen: Register},
-    // StackInside: {screen: TabsStack},
 
 });
 AppRegistry.registerComponent('sejwer_nejtiv', () => SimpleApp);

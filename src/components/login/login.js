@@ -10,8 +10,10 @@ export class Login extends Component {
             password: '',
             email: '',
             error: '',
+            navigation: this.props.navigation,
         };
     }
+
     static navigationOptions = {
         drawerLabel: 'Home',
     };
@@ -41,6 +43,7 @@ export class Login extends Component {
             });
 
             let responseJson = await response.json();
+            console.log(responseJson);
             if (responseJson.code === 401) {
                 this.setState({error: "Złe Dane Logowania"})
                 return false;
@@ -51,8 +54,9 @@ export class Login extends Component {
                 }
                 this.setState({success: "Zalogowano Pomyslnie"})
             }
-            if (responseJson) {
+            if (responseJson.token) {
                 AsyncStorage.setItem('token', responseJson.token);
+
                 this.props.navigation.navigate('Home')
             }
         } catch (error) {
@@ -61,34 +65,38 @@ export class Login extends Component {
 
     }
 
-    funktion(result){
-        if(result){
+    redirectToHome(result) {
+        if (result) {
             this.props.navigation.navigate('Home');
         }
     }
 
-    componentWillMount() {
+    async componentWillMount() {
+
         try {
-            const value =  AsyncStorage.getItem('token');
-            if (value !== null){
-                //TODO: Real Navigation + Real AuthVerification
-                this.props.navigation.navigate('Home')
+            const value = await   AsyncStorage.getItem('token');
+            if (value !== null) {
+                this.state.navigation.navigate('Home',{message: 'success'});
+                if (this.props.navigation.state.params) {
+                    this.setState({success: this.props.navigation.state.params.message})
+                }
             }
         } catch (error) {
+            console.error(error)
             // Error retrieving data
         }
-        if (this.props.navigation.state.params) {
-            this.setState({success: this.props.navigation.state.params.message})
-        }
+
     }
 
     render() {
 
         const {navigate} = this.props.navigation;
 
+        console.log(navigate);
         // if(this.props.navigation.state.params.message) {
         //     const {params} = this.props.navigation;
         // }
+
         return (
 
             <KeyboardAvoidingView style={styles.container}>
@@ -147,7 +155,7 @@ export class Login extends Component {
                     </Text>
                 </View>
                 <View style={styles.footer}>
-                    <Text style={styles.subtitleSmall}>Designed by PatCam Inc.</Text>
+                    <Text style={styles.subtitleSmall}>Designed by Webstork Inc.</Text>
                 </View>
             </KeyboardAvoidingView>
 

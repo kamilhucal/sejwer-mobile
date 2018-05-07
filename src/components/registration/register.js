@@ -10,8 +10,6 @@ import * as Globals from "../../helpers/Globals";
 export class Register extends Component {
 
     constructor(props) {
-
-        console.log(Globals.default.API_URL);
         super(props);
         this.state = {
             password: null,
@@ -19,7 +17,7 @@ export class Register extends Component {
             repeatedPassword: null,
             emailError: false,
             error: null,
-            gowno: this.props.navigation,
+            navigation: this.props.navigation,
         };
     }
 
@@ -67,11 +65,11 @@ export class Register extends Component {
                     })
 
                 });
-                if(response.status != 201){
-                    this.setState({error: "Uzytkownik istnieje"})
+                if(response.status !== 201){
+                    this.setState({error: "Uzytkownik istnieje"});
                     return false
                 }
-                this.state.gowno.navigate('Home',{message: 'success'});
+                this.state.navigation.navigate('Home',{message: 'success'});
             } catch (error) {
                 console.error(error);
             }
